@@ -25,6 +25,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final HealthFactory _health = HealthFactory();
+  List<HealthDataPoint> _healthDataList = [];
 
   @override
   void initState() {
@@ -44,6 +45,10 @@ class _MyHomePageState extends State<MyHomePage> {
         [HealthDataType.DISTANCE_WALKING_RUNNING],
       );
 
+      setState(() {
+        _healthDataList = healthData;
+      });
+
       // 콘솔에 출력
       for (var data in healthData) {
         print('Data point: ${data.value}, Date: ${data.dateFrom}');
@@ -59,8 +64,15 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text('HealthKit Running Data'),
       ),
-      body: Center(
-        child: Text('Check console for running data'),
+      body: ListView.builder(
+        itemCount: _healthDataList.length,
+        itemBuilder: (context, index) {
+          HealthDataPoint dataPoint = _healthDataList[index];
+          return ListTile(
+            title: Text('Distance: ${dataPoint.value} meters'),
+            subtitle: Text('Date: ${dataPoint.dateFrom}'),
+          );
+        },
       ),
     );
   }
