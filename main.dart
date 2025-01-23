@@ -24,30 +24,25 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final HealthFactory _health = HealthFactory();
-  List<HealthDataPoint> _healthDataList = [];
+  HealthFactory health = HealthFactory();
 
   @override
   void initState() {
     super.initState();
-    _fetchRunningData();
+    fetchRunningData();
   }
 
-  Future<void> _fetchRunningData() async {
-    // HealthKit 권한 요청
-    bool isAuthorized = await _health.requestAuthorization([HealthDataType.DISTANCE_WALKING_RUNNING]);
+  Future<void> fetchRunningData() async {
+    // 권한 요청
+    bool isAuthorized = await health.requestAuthorization([HealthDataType.DISTANCE_WALKING_RUNNING]);
 
     if (isAuthorized) {
       // 러닝 데이터 읽기
-      List<HealthDataPoint> healthData = await _health.getHealthDataFromTypes(
+      List<HealthDataPoint> healthData = await health.getHealthDataFromTypes(
         DateTime.now().subtract(Duration(days: 7)),
         DateTime.now(),
         [HealthDataType.DISTANCE_WALKING_RUNNING],
       );
-
-      setState(() {
-        _healthDataList = healthData;
-      });
 
       // 콘솔에 출력
       for (var data in healthData) {
@@ -64,15 +59,8 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text('HealthKit Running Data'),
       ),
-      body: ListView.builder(
-        itemCount: _healthDataList.length,
-        itemBuilder: (context, index) {
-          HealthDataPoint dataPoint = _healthDataList[index];
-          return ListTile(
-            title: Text('Distance: ${dataPoint.value} meters'),
-            subtitle: Text('Date: ${dataPoint.dateFrom}'),
-          );
-        },
+      body: Center(
+        child: Text('Check console for running data'),
       ),
     );
   }
